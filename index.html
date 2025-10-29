@@ -3,27 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>电商利润工具 - 网页版</title>
+    <title>电商利润工具 - 专业版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #1976d2;
-            --primary-light: #e3f2fd;
-            --success-color: #2e7d32;
-            --error-color: #d32f2f;
-            --warning-color: #f57c00;
-            --bg-color: #f5f5f5;
+            --primary-color: #4361ee;
+            --primary-light: #eef2ff;
+            --secondary-color: #3a0ca3;
+            --success-color: #4cc9a7;
+            --error-color: #f72585;
+            --warning-color: #f8961e;
+            --bg-color: #f8f9fa;
             --card-bg: #ffffff;
-            --text-color: #333333;
-            --text-light: #666666;
-            --border-radius: 8px;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --text-color: #2b2d42;
+            --text-light: #6c757d;
+            --border-radius: 12px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
         }
         
         body {
@@ -32,63 +35,82 @@
             line-height: 1.6;
             padding: 0;
             margin: 0;
-            font-size: 14px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(58, 12, 163, 0.05) 0%, transparent 20%);
         }
         
         .container {
             max-width: 100%;
             margin: 0 auto;
-            padding: 10px;
+            padding: 15px;
         }
         
         header {
             text-align: center;
-            padding: 15px 0;
-            margin-bottom: 15px;
-            background-color: var(--card-bg);
+            padding: 20px 0;
+            margin-bottom: 20px;
+            background: var(--gradient);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
         }
         
         h1 {
-            color: var(--primary-color);
-            font-size: 22px;
+            font-size: 24px;
             margin-bottom: 5px;
+            position: relative;
         }
         
         .subtitle {
-            color: var(--text-light);
             font-size: 14px;
+            opacity: 0.9;
         }
         
         .tabs {
             display: flex;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             background-color: var(--card-bg);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             overflow: hidden;
             position: sticky;
-            top: 85px;
+            top: 0;
             z-index: 99;
         }
         
         .tab {
             flex: 1;
-            padding: 12px 8px;
+            padding: 15px 10px;
             text-align: center;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             font-size: 14px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
-            min-height: 44px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 5px;
+            min-height: 60px;
+        }
+        
+        .tab i {
+            font-size: 16px;
         }
         
         .tab.active {
@@ -98,7 +120,7 @@
         }
         
         .tab:hover:not(.active) {
-            background-color: rgba(25, 118, 210, 0.05);
+            background-color: rgba(67, 97, 238, 0.05);
         }
         
         .tab-content {
@@ -106,8 +128,14 @@
             background-color: var(--card-bg);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            padding: 20px 15px;
-            margin-bottom: 15px;
+            padding: 25px 20px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .tab-content.active {
@@ -116,45 +144,75 @@
         
         .tab-content h2 {
             font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary-color);
         }
         
-        .form-group label {
+        .tab-content h2 i {
+            color: var(--primary-color);
+        }
+        
+        /* 表单项目布局 - 改为水平排列 */
+        .form-items {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 5px;
+        }
+        
+        .form-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background-color 0.2s;
+        }
+        
+        .form-item:hover {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        
+        .form-item:last-child {
+            border-bottom: none;
+        }
+        
+        .form-item label {
+            flex: 1;
             font-weight: 500;
             font-size: 14px;
-            margin-bottom: 5px;
-            width: 100%;
-        }
-        
-        .input-with-unit {
             display: flex;
-            width: 100%;
             align-items: center;
+            gap: 8px;
         }
         
-        .form-group input {
-            flex: 1;
+        .form-item label i {
+            color: var(--primary-color);
+            width: 18px;
+        }
+        
+        .form-item input {
+            width: 150px;
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 1px solid #e2e8f0;
             border-radius: var(--border-radius);
-            font-size: 16px;
-            transition: border-color 0.3s;
-            width: 100%;
-            -webkit-appearance: none;
-            min-height: 44px;
+            font-size: 14px;
+            min-height: 46px;
+            background-color: #f8f9fa;
+            transition: all 0.3s;
         }
         
-        .form-group input:focus {
+        .form-item input:focus {
             border-color: var(--primary-color);
+            background-color: white;
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.1);
             outline: none;
         }
         
@@ -163,54 +221,85 @@
             color: var(--text-light);
             font-size: 14px;
             min-width: 40px;
-            text-align: right;
         }
         
         .btn {
             display: block;
             width: 100%;
             padding: 16px;
-            background-color: var(--primary-color);
+            background: var(--gradient);
             color: white;
             border: none;
             border-radius: var(--border-radius);
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
             margin-top: 20px;
-            min-height: 50px;
+            min-height: 55px;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.1), transparent);
+            pointer-events: none;
         }
         
         .btn:hover {
-            background-color: #1565c0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
         }
         
         .result {
             padding: 20px;
-            background-color: #f5f5f5;
             border-radius: var(--border-radius);
             text-align: center;
             font-size: 20px;
-            font-weight: bold;
+            font-weight: 700;
             margin-top: 20px;
-            border: 1px solid #ddd;
+            border: 1px solid #e2e8f0;
             min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .result::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, transparent 100%);
+            pointer-events: none;
         }
         
         .result.profit {
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
         
         .result.pricing {
-            background-color: var(--primary-light);
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
         }
         
         .result.budget {
-            background-color: #fff3e0;
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
         }
         
         .positive {
@@ -225,13 +314,22 @@
             max-height: 400px;
             overflow-y: auto;
             margin-bottom: 20px;
+            padding-right: 5px;
         }
         
         .budget-item {
             display: flex;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
+            padding: 14px 0;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background-color 0.2s;
+        }
+        
+        .budget-item:hover {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding-left: 10px;
+            padding-right: 10px;
         }
         
         .budget-item:last-child {
@@ -242,412 +340,427 @@
             flex: 1;
             font-weight: 500;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .budget-item label i {
+            color: var(--primary-color);
+            width: 18px;
         }
         
         .budget-item input {
-            width: 100px;
-            padding: 10px;
-            border: 1px solid #ddd;
+            width: 120px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
             border-radius: var(--border-radius);
             font-size: 14px;
-            min-height: 44px;
+            min-height: 46px;
+            background-color: #f8f9fa;
+            transition: all 0.3s;
+        }
+        
+        .budget-item input:focus {
+            border-color: var(--primary-color);
+            background-color: white;
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.1);
         }
         
         footer {
             text-align: center;
-            padding: 15px;
+            padding: 20px;
             color: var(--text-light);
-            font-size: 12px;
-            margin-top: 20px;
+            font-size: 13px;
+            margin-top: 30px;
         }
         
         /* 移动设备优化 */
         @media (max-width: 768px) {
             .container {
-                padding: 8px;
+                padding: 10px;
             }
             
             header {
-                padding: 12px 0;
-                margin-bottom: 12px;
+                padding: 18px 0;
+                margin-bottom: 15px;
             }
             
             h1 {
-                font-size: 20px;
+                font-size: 22px;
             }
             
             .tabs {
-                margin-bottom: 12px;
+                margin-bottom: 15px;
             }
             
             .tab {
-                padding: 10px 6px;
+                padding: 12px 8px;
                 font-size: 13px;
+                min-height: 55px;
+            }
+            
+            .tab i {
+                font-size: 15px;
             }
             
             .tab-content {
-                padding: 15px 12px;
+                padding: 20px 15px;
             }
             
             .tab-content h2 {
-                font-size: 16px;
+                font-size: 17px;
             }
             
-            .form-group {
-                margin-bottom: 12px;
+            .form-item {
+                padding: 12px 0;
             }
             
-            .form-group input {
+            .form-item input {
+                width: 120px;
                 padding: 10px;
-                font-size: 16px;
             }
             
             .result {
-                padding: 15px;
+                padding: 18px;
                 font-size: 18px;
             }
             
             .budget-item {
-                padding: 10px 0;
+                padding: 12px 0;
             }
             
             .budget-item input {
-                width: 90px;
+                width: 110px;
             }
         }
         
         @media (max-width: 480px) {
             .tab {
                 font-size: 12px;
-                padding: 8px 4px;
+                padding: 10px 6px;
             }
             
             .tab-content {
-                padding: 12px 10px;
+                padding: 18px 12px;
             }
             
-            .form-group input {
+            .form-item input {
+                width: 100px;
                 padding: 8px;
             }
             
             .result {
-                padding: 12px;
-                font-size: 16px;
+                padding: 16px;
+                font-size: 17px;
             }
             
             .budget-item input {
-                width: 80px;
+                width: 100px;
             }
         }
         
         /* 滚动条样式 */
+        .form-items::-webkit-scrollbar,
         .budget-items::-webkit-scrollbar {
             width: 6px;
         }
         
+        .form-items::-webkit-scrollbar-track,
         .budget-items::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
         
+        .form-items::-webkit-scrollbar-thumb,
         .budget-items::-webkit-scrollbar-thumb {
             background: #c1c1c1;
             border-radius: 10px;
         }
         
+        .form-items::-webkit-scrollbar-thumb:hover,
         .budget-items::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8;
+        }
+        
+        /* 卡片悬停效果 */
+        .tab-content {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .tab-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>电商利润工具</h1>
-            <div class="subtitle">【dory制作】</div>
+            <h1><i class="fas fa-calculator"></i> 电商利润工具</h1>
+            <div class="subtitle">专业电商利润分析与成本计算</div>
         </header>
         
         <div class="tabs">
-            <div class="tab active" data-tab="profit">利润计算</div>
-            <div class="tab" data-tab="pricing">反向定价</div>
-            <div class="tab" data-tab="budget">成本预算</div>
+            <div class="tab active" data-tab="profit">
+                <i class="fas fa-chart-line"></i>
+                <span>利润计算</span>
+            </div>
+            <div class="tab" data-tab="pricing">
+                <i class="fas fa-tags"></i>
+                <span>反向定价</span>
+            </div>
+            <div class="tab" data-tab="budget">
+                <i class="fas fa-calculator"></i>
+                <span>成本预算</span>
+            </div>
         </div>
         
         <!-- 利润计算 -->
         <div class="tab-content active" id="profit">
-            <h2>电商利润分析</h2>
+            <h2><i class="fas fa-chart-bar"></i> 电商利润分析</h2>
             
-            <div class="form-group">
-                <label for="price">售价</label>
-                <div class="input-with-unit">
+            <div class="form-items">
+                <div class="form-item">
+                    <label for="price"><i class="fas fa-dollar-sign"></i> 售价</label>
                     <input type="number" id="price" value="69.1" step="0.01">
                     <div class="unit">元</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="cost">成本价</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="cost"><i class="fas fa-industry"></i> 成本价</label>
                     <input type="number" id="cost" value="38.8" step="0.01">
                     <div class="unit">元</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="express">快递费</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="express"><i class="fas fa-shipping-fast"></i> 快递费</label>
                     <input type="number" id="express" value="2" step="0.01">
                     <div class="unit">元</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="insurance">运费险</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="insurance"><i class="fas fa-shield-alt"></i> 运费险</label>
                     <input type="number" id="insurance" value="2" step="0.01">
                     <div class="unit">元</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="plat_rate">平台费率</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="plat_rate"><i class="fas fa-store"></i> 平台费率</label>
                     <input type="number" id="plat_rate" value="0.6" step="0.01">
                     <div class="unit">%</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="return_rate">退货率</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="return_rate"><i class="fas fa-undo-alt"></i> 退货率</label>
                     <input type="number" id="return_rate" value="27" step="0.01">
                     <div class="unit">%</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="refund_rate">仅退款率</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="refund_rate"><i class="fas fa-money-bill-wave"></i> 仅退款率</label>
                     <input type="number" id="refund_rate" value="10" step="0.01">
                     <div class="unit">%</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="promo">推广费</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="promo"><i class="fas fa-bullhorn"></i> 推广费</label>
                     <input type="number" id="promo" value="14" step="0.01">
                     <div class="unit">元/单</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="promo_pct">推广占比</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="promo_pct"><i class="fas fa-chart-pie"></i> 推广占比</label>
                     <input type="number" id="promo_pct" value="100" step="0.01">
                     <div class="unit">%</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="qty">总售出单数</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="qty"><i class="fas fa-boxes"></i> 总售出单数</label>
                     <input type="number" id="qty" value="100" step="1">
                     <div class="unit">单</div>
                 </div>
             </div>
             
-            <button class="btn" id="calc-profit">计算利润</button>
+            <button class="btn" id="calc-profit">
+                <i class="fas fa-calculator"></i> 计算利润
+            </button>
             
             <div class="result profit" id="profit-result">-- 元</div>
         </div>
         
         <!-- 反向定价 -->
         <div class="tab-content" id="pricing">
-            <h2>反向定价</h2>
+            <h2><i class="fas fa-search-dollar"></i> 反向定价</h2>
             
-            <div class="form-group">
-                <label for="target_margin">目标利润率</label>
-                <div class="input-with-unit">
+            <div class="form-items">
+                <div class="form-item">
+                    <label for="target_margin"><i class="fas fa-bullseye"></i> 目标利润率</label>
                     <input type="number" id="target_margin" value="20" step="0.01">
                     <div class="unit">%</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="pricing_cost">成本价</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="pricing_cost"><i class="fas fa-industry"></i> 成本价</label>
                     <input type="number" id="pricing_cost" value="38.8" step="0.01">
                     <div class="unit">元</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="pricing_express">快递费</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="pricing_express"><i class="fas fa-shipping-fast"></i> 快递费</label>
                     <input type="number" id="pricing_express" value="2" step="0.01">
                     <div class="unit">元</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="pricing_insurance">运费险</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="pricing_insurance"><i class="fas fa-shield-alt"></i> 运费险</label>
                     <input type="number" id="pricing_insurance" value="2" step="0.01">
                     <div class="unit">元</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="pricing_plat_rate">平台费率</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="pricing_plat_rate"><i class="fas fa-store"></i> 平台费率</label>
                     <input type="number" id="pricing_plat_rate" value="0.6" step="0.01">
                     <div class="unit">%</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="pricing_return_rate">退货率</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="pricing_return_rate"><i class="fas fa-undo-alt"></i> 退货率</label>
                     <input type="number" id="pricing_return_rate" value="27" step="0.01">
                     <div class="unit">%</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="pricing_refund_rate">仅退款率</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="pricing_refund_rate"><i class="fas fa-money-bill-wave"></i> 仅退款率</label>
                     <input type="number" id="pricing_refund_rate" value="10" step="0.01">
                     <div class="unit">%</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="pricing_promo">推广费</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="pricing_promo"><i class="fas fa-bullhorn"></i> 推广费</label>
                     <input type="number" id="pricing_promo" value="14" step="0.01">
                     <div class="unit">元/单</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="pricing_promo_pct">推广占比</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="pricing_promo_pct"><i class="fas fa-chart-pie"></i> 推广占比</label>
                     <input type="number" id="pricing_promo_pct" value="100" step="0.01">
                     <div class="unit">%</div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="pricing_qty">总售出单数</label>
-                <div class="input-with-unit">
+                
+                <div class="form-item">
+                    <label for="pricing_qty"><i class="fas fa-boxes"></i> 总售出单数</label>
                     <input type="number" id="pricing_qty" value="100" step="1">
                     <div class="unit">单</div>
                 </div>
             </div>
             
-            <button class="btn" id="calc-pricing">计算最低售价</button>
+            <button class="btn" id="calc-pricing">
+                <i class="fas fa-calculator"></i> 计算最低售价
+            </button>
             
             <div class="result pricing" id="pricing-result">-- 元</div>
         </div>
         
         <!-- 成本预算 -->
         <div class="tab-content" id="budget">
-            <h2>成本预算</h2>
+            <h2><i class="fas fa-file-invoice-dollar"></i> 成本预算</h2>
             
             <div class="budget-items">
                 <div class="budget-item">
-                    <label for="fabric">面料</label>
+                    <label for="fabric"><i class="fas fa-cut"></i> 面料</label>
                     <input type="number" id="fabric" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="processing">加工费</label>
+                    <label for="processing"><i class="fas fa-cogs"></i> 加工费</label>
                     <input type="number" id="processing" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="cutting">裁工</label>
+                    <label for="cutting"><i class="fas fa-scissors"></i> 裁工</label>
                     <input type="number" id="cutting" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="embroidery">绣花</label>
+                    <label for="embroidery"><i class="fas fa-thread"></i> 绣花</label>
                     <input type="number" id="embroidery" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="printing">印花</label>
+                    <label for="printing"><i class="fas fa-stamp"></i> 印花</label>
                     <input type="number" id="printing" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="accessories">辅料</label>
+                    <label for="accessories"><i class="fas fa-puzzle-piece"></i> 辅料</label>
                     <input type="number" id="accessories" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="washing">洗水</label>
+                    <label for="washing"><i class="fas fa-soap"></i> 洗水</label>
                     <input type="number" id="washing" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="buttonhole">打扣眼</label>
+                    <label for="buttonhole"><i class="fas fa-eye"></i> 打扣眼</label>
                     <input type="number" id="buttonhole" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="buttons">扣子</label>
+                    <label for="buttons"><i class="fas fa-circle"></i> 扣子</label>
                     <input type="number" id="buttons" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="ironing">烫工费</label>
+                    <label for="ironing"><i class="fas fa-fire"></i> 烫工费</label>
                     <input type="number" id="ironing" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="tags">商标吊牌</label>
+                    <label for="tags"><i class="fas fa-tag"></i> 商标吊牌</label>
                     <input type="number" id="tags" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="packaging">包装袋</label>
+                    <label for="packaging"><i class="fas fa-box-open"></i> 包装袋</label>
                     <input type="number" id="packaging" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="additional">附加费</label>
+                    <label for="additional"><i class="fas fa-plus-circle"></i> 附加费</label>
                     <input type="number" id="additional" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
                 
                 <div class="budget-item">
-                    <label for="packing">包装</label>
+                    <label for="packing"><i class="fas fa-box"></i> 包装</label>
                     <input type="number" id="packing" value="0" step="0.01" class="budget-input">
                     <div class="unit">元</div>
                 </div>
             </div>
             
-            <button class="btn" id="calc-budget">计算总成本</button>
+            <button class="btn" id="calc-budget">
+                <i class="fas fa-calculator"></i> 计算总成本
+            </button>
             
             <div class="result budget" id="budget-result">合计：0.00 元</div>
         </div>
         
         <footer>
-            <p>电商利润工具 v2025.10 | 网页版</p>
+            <p>电商利润工具 v2025.10 | 专业网页版 | 由 dory 制作</p>
         </footer>
     </div>
 
