@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电商利润工具 - 网页版</title>
+    <style>
+        :root {
+            --primary-color: #1976d2;
+            --primary-light: #e3f2fd;
+            --success-color: #2e7d32;
+            --error-color: #d32f2f;
+            --warning-color: #f57c00;
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-light: #666666;
+            --border-radius: 8px;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            background-color: var(--primary-light);
+        }
+        
+        .tab:hover:not(.active) {
+            background-color: rgba(25, 118, 210, 0.05);
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-group label {
+            flex: 1;
+            font-weight: 500;
+            font-size: 15px;
+        }
+        
+        .form-group input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            transition: border-color 0.3s;
+            max-width: 150px;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .unit {
+            margin-left: 10px;
+            color: var(--text-light);
+            font-size: 15px;
+            min-width: 30px;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background-color: #1565c0;
+        }
+        
+        .result {
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .result.profit {
+            background-color: #f5f5f5;
+        }
+        
+        .result.pricing {
+            background-color: var(--primary-light);
+        }
+        
+        .result.budget {
+            background-color: #fff3e0;
+        }
+        
+        .positive {
+            color: var(--success-color);
+        }
+        
+        .negative {
+            color: var(--error-color);
+        }
+        
+        .budget-items {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .budget-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .budget-item:last-child {
+            border-bottom: none;
+        }
+        
+        .budget-item label {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .budget-item input {
+            width: 120px;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 14px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .form-group input {
+                max-width: 100%;
+                width: 100%;
+                margin-top: 5px;
+            }
+            
+            .unit {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>电商利润工具</h1>
+            <div class="subtitle">【dory制作】</div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="profit">利润计算</div>
+            <div class="tab" data-tab="pricing">反向定价</div>
+            <div class="tab" data-tab="budget">成本预算</div>
+        </div>
+        
+        <!-- 利润计算 -->
+        <div class="tab-content active" id="profit">
+            <h2>电商利润分析</h2>
+            
+            <div class="form-group">
+                <label for="price">售价</label>
+                <input type="number" id="price" value="69.1" step="0.01">
+                <div class="unit">元</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="cost">成本价</label>
+                <input type="number" id="cost" value="38.8" step="0.01">
+                <div class="unit">元</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="express">快递费</label>
+                <input type="number" id="express" value="2" step="0.01">
+                <div class="unit">元</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="insurance">运费险</label>
+                <input type="number" id="insurance" value="2" step="0.01">
+                <div class="unit">元</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="plat_rate">平台费率</label>
+                <input type="number" id="plat_rate" value="0.6" step="0.01">
+                <div class="unit">%</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="return_rate">退货率</label>
+                <input type="number" id="return_rate" value="27" step="0.01">
+                <div class="unit">%</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="refund_rate">仅退款率</label>
+                <input type="number" id="refund_rate" value="10" step="0.01">
+                <div class="unit">%</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="promo">推广费</label>
+                <input type="number" id="promo" value="14" step="0.01">
+                <div class="unit">元/单</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="promo_pct">推广占比</label>
+                <input type="number" id="promo_pct" value="100" step="0.01">
+                <div class="unit">%</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="qty">总售出单数</label>
+                <input type="number" id="qty" value="100" step="1">
+                <div class="unit">单</div>
+            </div>
+            
+            <button class="btn" id="calc-profit">计算利润</button>
+            
+            <div class="result profit" id="profit-result">-- 元</div>
+        </div>
+        
+        <!-- 反向定价 -->
+        <div class="tab-content" id="pricing">
+            <h2>反向定价</h2>
+            
+            <div class="form-group">
+                <label for="target_margin">目标利润率</label>
+                <input type="number" id="target_margin" value="20" step="0.01">
+                <div class="unit">%</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pricing_cost">成本价</label>
+                <input type="number" id="pricing_cost" value="38.8" step="0.01">
+                <div class="unit">元</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pricing_express">快递费</label>
+                <input type="number" id="pricing_express" value="2" step="0.01">
+                <div class="unit">元</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pricing_insurance">运费险</label>
+                <input type="number" id="pricing_insurance" value="2" step="0.01">
+                <div class="unit">元</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pricing_plat_rate">平台费率</label>
+                <input type="number" id="pricing_plat_rate" value="0.6" step="0.01">
+                <div class="unit">%</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pricing_return_rate">退货率</label>
+                <input type="number" id="pricing_return_rate" value="27" step="0.01">
+                <div class="unit">%</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pricing_refund_rate">仅退款率</label>
+                <input type="number" id="pricing_refund_rate" value="10" step="0.01">
+                <div class="unit">%</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pricing_promo">推广费</label>
+                <input type="number" id="pricing_promo" value="14" step="0.01">
+                <div class="unit">元/单</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pricing_promo_pct">推广占比</label>
+                <input type="number" id="pricing_promo_pct" value="100" step="0.01">
+                <div class="unit">%</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pricing_qty">总售出单数</label>
+                <input type="number" id="pricing_qty" value="100" step="1">
+                <div class="unit">单</div>
+            </div>
+            
+            <button class="btn" id="calc-pricing">计算最低售价</button>
+            
+            <div class="result pricing" id="pricing-result">-- 元</div>
+        </div>
+        
+        <!-- 成本预算 -->
+        <div class="tab-content" id="budget">
+            <h2>成本预算</h2>
+            
+            <div class="budget-items">
+                <div class="budget-item">
+                    <label for="fabric">面料</label>
+                    <input type="number" id="fabric" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="processing">加工费</label>
+                    <input type="number" id="processing" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="cutting">裁工</label>
+                    <input type="number" id="cutting" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="embroidery">绣花</label>
+                    <input type="number" id="embroidery" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="printing">印花</label>
+                    <input type="number" id="printing" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="accessories">辅料</label>
+                    <input type="number" id="accessories" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="washing">洗水</label>
+                    <input type="number" id="washing" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="buttonhole">打扣眼</label>
+                    <input type="number" id="buttonhole" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="buttons">扣子</label>
+                    <input type="number" id="buttons" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="ironing">烫工费</label>
+                    <input type="number" id="ironing" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="tags">商标吊牌</label>
+                    <input type="number" id="tags" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="packaging">包装袋</label>
+                    <input type="number" id="packaging" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="additional">附加费</label>
+                    <input type="number" id="additional" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+                
+                <div class="budget-item">
+                    <label for="packing">包装</label>
+                    <input type="number" id="packing" value="0" step="0.01" class="budget-input">
+                    <div class="unit">元</div>
+                </div>
+            </div>
+            
+            <button class="btn" id="calc-budget">计算总成本</button>
+            
+            <div class="result budget" id="budget-result">合计：0.00 元</div>
+        </div>
+        
+        <footer>
+            <p>电商利润工具 v2025.10 | 网页版</p>
+        </footer>
+    </div>
+
+    <script>
+        // 切换标签页
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有活动标签
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // 激活当前标签
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // 利润计算功能
+        document.getElementById('calc-profit').addEventListener('click', () => {
+            try {
+                const price = parseFloat(document.getElementById('price').value) || 0;
+                const cost = parseFloat(document.getElementById('cost').value) || 0;
+                const express = parseFloat(document.getElementById('express').value) || 0;
+                const insurance = parseFloat(document.getElementById('insurance').value) || 0;
+                const plat_rate = parseFloat(document.getElementById('plat_rate').value) || 0;
+                const return_rate = parseFloat(document.getElementById('return_rate').value) || 0;
+                const refund_rate = parseFloat(document.getElementById('refund_rate').value) || 0;
+                const promo = parseFloat(document.getElementById('promo').value) || 0;
+                const promo_pct = parseFloat(document.getElementById('promo_pct').value) || 0;
+                const qty = parseFloat(document.getElementById('qty').value) || 0;
+                
+                const plat_fee = price * plat_rate / 100;
+                const valid = qty * (1 - return_rate / 100 - refund_rate / 100);
+                const gross = valid * (price - cost - express - insurance - promo * promo_pct / 100 - plat_fee);
+                const ret_loss = qty * return_rate / 100 * (express + insurance + 0.26 + promo * promo_pct / 100);
+                const ref_loss = qty * refund_rate / 100 * (promo * promo_pct / 100);
+                const other = qty * 0.2 + qty * 0.03 + qty * 0.02;
+                const profit = gross - ret_loss - ref_loss - other;
+                
+                const resultElement = document.getElementById('profit-result');
+                resultElement.textContent = `${profit.toFixed(2)} 元`;
+                resultElement.className = `result profit ${profit >= 0 ? 'positive' : 'negative'}`;
+            } catch (error) {
+                alert('输入错误: ' + error.message);
+            }
+        });
+        
+        // 反向定价功能
+        document.getElementById('calc-pricing').addEventListener('click', () => {
+            try {
+                const target_margin = parseFloat(document.getElementById('target_margin').value) || 0;
+                const cost = parseFloat(document.getElementById('pricing_cost').value) || 0;
+                const express = parseFloat(document.getElementById('pricing_express').value) || 0;
+                const insurance = parseFloat(document.getElementById('pricing_insurance').value) || 0;
+                const plat_rate = parseFloat(document.getElementById('pricing_plat_rate').value) || 0;
+                const return_rate = parseFloat(document.getElementById('pricing_return_rate').value) || 0;
+                const refund_rate = parseFloat(document.getElementById('pricing_refund_rate').value) || 0;
+                const promo = parseFloat(document.getElementById('pricing_promo').value) || 0;
+                const promo_pct = parseFloat(document.getElementById('pricing_promo_pct').value) || 0;
+                const qty = parseFloat(document.getElementById('pricing_qty').value) || 0;
+                
+                const fix = (cost + express + insurance + promo * promo_pct / 100 + 0.2 + 0.03 + 0.02);
+                const ret_loss = return_rate / 100 * (express + insurance + 0.26 + promo * promo_pct / 100);
+                const ref_loss = refund_rate / 100 * (promo * promo_pct / 100);
+                const other_per = ret_loss + ref_loss + 0.2 + 0.03 + 0.02;
+                
+                const A = (1 - return_rate / 100 - refund_rate / 100) * (1 - plat_rate / 100);
+                const B = fix * (1 - return_rate / 100 - refund_rate / 100) + other_per;
+                const C = target_margin / 100;
+                
+                if (A - C <= 0) {
+                    throw new Error('目标利润率过高，无解！');
+                }
+                
+                const price = B / (A - C);
+                
+                const resultElement = document.getElementById('pricing-result');
+                resultElement.textContent = `${price.toFixed(2)} 元`;
+                resultElement.className = 'result pricing';
+            } catch (error) {
+                alert('输入错误: ' + error.message);
+            }
+        });
+        
+        // 成本预算功能
+        document.getElementById('calc-budget').addEventListener('click', calculateBudget);
+        
+        // 为所有预算输入框添加事件监听
+        document.querySelectorAll('.budget-input').forEach(input => {
+            input.addEventListener('input', calculateBudget);
+        });
+        
+        function calculateBudget() {
+            try {
+                let total = 0;
+                document.querySelectorAll('.budget-input').forEach(input => {
+                    total += parseFloat(input.value) || 0;
+                });
+                
+                document.getElementById('budget-result').textContent = `合计：${total.toFixed(2)} 元`;
+            } catch (error) {
+                alert('输入错误: ' + error.message);
+            }
+        }
+        
+        // 初始化计算
+        calculateBudget();
+    </script>
+</body>
+</html>
